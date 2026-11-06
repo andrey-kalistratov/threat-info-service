@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Information Exchange Service
   description: API для обмена информацией об угрозах.
-  version: 1.1.0
+  version: 1.2.0
 
 paths:
   /info/{md5}:
@@ -153,6 +153,38 @@ components:
           type: string
           description: Название угрозы
           example: "Trojan.Win32.Generic"
+        description:
+          type: string
+          maxLength: 4096
+          description: Описание поведения и особенностей угрозы
+          example: "Собирает учётные данные и передаёт их злоумышленнику."
+        malware_types:
+          type: array
+          description: >-
+            Категории угрозы из поддерживаемого поднабора словаря malware-type-ov
+            стандарта STIX 2.1. Пустой массив или отсутствие поля означает,
+            что категории не указаны.
+          uniqueItems: true
+          default: []
+          items:
+            type: string
+            enum:
+              - backdoor
+              - ransomware
+              - spyware
+              - trojan
+              - virus
+              - worm
+          example: [trojan, spyware]
+        confidence:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 100
+          description: >-
+            Уверенность автора в достоверности сведений. Отсутствие поля означает,
+            что оценка не дана.
+          example: 85
 
     ErrorResponse:
       type: object
