@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
   title: Information Exchange Service
-  description: API для обмена информацией об угрозах. 
-  version: 1.0.0
+  description: API для обмена информацией об угрозах.
+  version: 1.1.0
 
 paths:
   /info/{md5}:
@@ -25,7 +25,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ThreatResponse'
+                $ref: '#/components/schemas/Threat'
         '404':
           description: Угроза с указанным MD5 не найден
           content:
@@ -63,14 +63,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ThreatUpdateRequest'
+              $ref: '#/components/schemas/ThreatData'
       responses:
         '200':
           description: Информация успешно обновлена
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ThreatResponse'
+                $ref: '#/components/schemas/Threat'
         '400':
           description: Некорректные данные запроса или MD5
           content:
@@ -100,14 +100,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ThreatCreateRequest'
+              $ref: '#/components/schemas/Threat'
       responses:
         '201':
           description: Запись успешно создана
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ThreatResponse'
+                $ref: '#/components/schemas/Threat'
         '400':
           description: Некорректные данные запроса (например, невалидный MD5)
           content:
@@ -129,39 +129,26 @@ paths:
 
 components:
   schemas:
-    ThreatCreateRequest:
+    Threat:
+      description: Сведения об угрозе
+      allOf:
+        - $ref: '#/components/schemas/ThreatData'
+        - type: object
+          required:
+            - md5
+          properties:
+            md5:
+              type: string
+              pattern: '^[a-fA-F0-9]{32}$'
+              description: MD5-хеш файла (32 шестнадцатеричных символа)
+              example: "d41d8cd98f00b204e9800998ecf8427e"
+
+    ThreatData:
       type: object
+      description: Изменяемые сведения об угрозе
       required:
-        - md5
         - name
       properties:
-        md5:
-          type: string
-          pattern: '^[a-fA-F0-9]{32}$'
-          description: MD5-хеш файла (32 шестнадцатеричных символа)
-          example: "d41d8cd98f00b204e9800998ecf8427e"
-        name:
-          type: string
-          description: Название угрозы
-          example: "Trojan.Win32.Generic"
-    ThreatUpdateRequest:
-      type: object
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          description: Название угрозы
-          example: "Trojan.Win32.Generic"
-        
-    ThreatResponse:
-      type: object
-      properties:
-        md5:
-          type: string
-          pattern: '^[a-fA-F0-9]{32}$'
-          description: MD5-хеш
-          example: "d41d8cd98f00b204e9800998ecf8427e"
         name:
           type: string
           description: Название угрозы
