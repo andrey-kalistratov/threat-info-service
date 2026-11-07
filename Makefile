@@ -6,7 +6,9 @@ MIN_COVERAGE := 70
 COVERAGE_FOLDER := coverage
 COVERAGE_EXCLUDE :=
 
-.PHONY: lint-openapi lint test test-cover
+COMPOSE := docker compose -p threats-service --env-file docker/.env -f docker/compose.yaml
+
+.PHONY: lint-openapi lint test test-cover db-up migrate
 
 # Проверка спецификации OpenAPI.
 lint-openapi:
@@ -48,3 +50,11 @@ test-cover: test
 	    echo "❌ Покрытие кода ($$cov%) ниже допустимого порога ($(MIN_COVERAGE)%)!"; \
 	    exit 1; \
 	fi
+
+# Запуск PostgreSQL с ожиданием готовности.
+db-up:
+	$(COMPOSE) up -d --wait db
+
+# Новый одноразовый запуск миграций, включая повторное развёртывание.
+migrate:
+	$(COMPOSE) run --build --rm migrate
