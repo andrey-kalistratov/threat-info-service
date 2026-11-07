@@ -1,0 +1,51 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - errorlint
+    - nilerr
+    - contextcheck
+    - noctx
+    - bodyclose
+    - sqlclosecheck
+    - rowserrcheck
+    - gosec
+    - revive
+    - nolintlint
+    - cyclop
+    - gocognit
+  settings:
+    errcheck:
+      # Проверять и явное отбрасывание ошибки, и утверждения типов без проверки.
+      check-blank: true
+      check-type-assertions: true
+    nolintlint:
+      # Подавление проверки должно называть линтер и объяснять причину.
+      require-specific: true
+      require-explanation: true
+    cyclop:
+      # Максимальная цикломатическая сложность отдельной функции.
+      max-complexity: 15
+    gocognit:
+      # Сообщать о когнитивной сложности начиная с 20 (учитывает вложенность).
+      min-complexity: 20
+  exclusions:
+    # Исключать генерацию только по стандартному маркеру Go; тесты проверять.
+    generated: strict
+
+formatters:
+  enable:
+    - goimports
+  settings:
+    goimports:
+      # Импорты нашего модуля — отдельная группа после сторонних пакетов.
+      local-prefixes:
+        - github.com/andrey-kalistratov/threat-info-service
+  exclusions:
+    generated: strict
