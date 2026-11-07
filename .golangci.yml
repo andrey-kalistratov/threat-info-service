@@ -20,7 +20,16 @@ linters:
     - nolintlint
     - cyclop
     - gocognit
+    - testifylint
+    - gochecknoglobals
   settings:
+    govet:
+      enable:
+        - shadow
+      settings:
+        shadow:
+          # Искать опасное затенение без строгого запрета локальных одноимённых переменных.
+          strict: false
     errcheck:
       # Проверять и явное отбрасывание ошибки, и утверждения типов без проверки.
       check-blank: true
