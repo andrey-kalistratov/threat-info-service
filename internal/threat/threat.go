@@ -7,6 +7,14 @@ import (
 	"strings"
 )
 
+var (
+	// ErrInvalidMD5Length означает, что длина MD5 отличается от 32 символов.
+	ErrInvalidMD5Length = errors.New("MD5 должен содержать ровно 32 шестнадцатеричных символа")
+
+	// ErrInvalidMD5Characters означает наличие недопустимых hex-символов.
+	ErrInvalidMD5Characters = errors.New("MD5 содержит недопустимые символы")
+)
+
 // Threat — сведения об угрозе с MD5 файла в качестве ключа.
 type Threat struct {
 	MD5          MD5
@@ -48,11 +56,11 @@ const (
 // Принимает ровно 32 ASCII hex-символа без пробелов и префиксов.
 func ParseMD5(value string) (MD5, error) {
 	if len(value) != 32 {
-		return "", errors.New("MD5 должен содержать ровно 32 шестнадцатеричных символа")
+		return "", ErrInvalidMD5Length
 	}
 
 	if _, err := hex.DecodeString(value); err != nil {
-		return "", errors.New("MD5 содержит недопустимые символы")
+		return "", ErrInvalidMD5Characters
 	}
 
 	return MD5(strings.ToLower(value)), nil
