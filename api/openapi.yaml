@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Information Exchange Service
   description: API для обмена информацией об угрозах.
-  version: 1.2.0
+  version: 1.2.1
 
 paths:
   /info/{md5}:
@@ -156,6 +156,7 @@ components:
         description:
           type: string
           maxLength: 4096
+          default: ''
           description: Описание поведения и особенностей угрозы
           example: "Собирает учётные данные и передаёт их злоумышленнику."
         malware_types:

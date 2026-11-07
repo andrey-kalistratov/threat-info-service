@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: OpenAPI lint
+        run: make lint-openapi
+
+      - name: Build
+        run: go build ./...
+
+      - name: Go lint
+        run: make lint
+
+      - name: Test coverage
+        run: make test-cover
