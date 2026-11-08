@@ -8,6 +8,12 @@ import (
 )
 
 var (
+	// ErrNotFound означает отсутствие записи с указанным MD5.
+	ErrNotFound = errors.New("угроза не найдена")
+
+	// ErrAlreadyExists означает, что запись с указанным MD5 уже существует.
+	ErrAlreadyExists = errors.New("угроза уже существует")
+
 	// ErrInvalidMD5Length означает, что длина MD5 отличается от 32 символов.
 	ErrInvalidMD5Length = errors.New("MD5 должен содержать ровно 32 шестнадцатеричных символа")
 
