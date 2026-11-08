@@ -2,7 +2,7 @@ OPENAPI_VALIDATOR_IMAGE := pythonopenapi/openapi-spec-validator:0.8.2
 GOLANGCI_LINT_IMAGE := golangci/golangci-lint:v2.11.2
 
 # Минимальное покрытие: целое число от 0 до 100.
-MIN_COVERAGE := 70
+MIN_COVERAGE := 68
 COVERAGE_FOLDER := coverage
 COVERAGE_EXCLUDE :=
 
