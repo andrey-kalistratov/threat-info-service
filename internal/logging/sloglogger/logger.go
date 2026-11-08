@@ -1,5 +1,5 @@
-// Package slog создает логгер на основе стандартного log/slog.
-package slog
+// Package sloglogger создаёт логгеры на основе стандартного log/slog.
+package sloglogger
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/andrey-kalistratov/threat-info-service/internal/config"
 )
 
-// New создает настроенный логгер, записывающий в стандартный вывод.
+// New создаёт настроенный логгер, записывающий в стандартный вывод.
 func New(cfg *config.Log) (*slog.Logger, error) {
 	level := new(slog.LevelVar)
 	if err := level.UnmarshalText([]byte(cfg.Level)); err != nil {
@@ -22,7 +22,7 @@ func New(cfg *config.Log) (*slog.Logger, error) {
 	return slog.New(slog.NewTextHandler(os.Stdout, options)), nil
 }
 
-// NewTemporary создает логгер для сообщений до загрузки настроек сервиса.
-func NewTemporary() *slog.Logger {
+// NewBootstrap создаёт логгер для сообщений до загрузки конфигурации.
+func NewBootstrap() *slog.Logger {
 	return slog.New(slog.NewJSONHandler(os.Stdout, nil))
 }
