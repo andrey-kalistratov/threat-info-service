@@ -34,5 +34,27 @@ services:
         condition: service_healthy
     command: ["up"]
 
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    environment:
+      DB_POSTGRES_HOST: db
+      DB_POSTGRES_PORT: 5432
+      DB_POSTGRES_DATABASE: ${DB_POSTGRES_DATABASE:?DB_POSTGRES_DATABASE is required}
+      DB_POSTGRES_USER: ${DB_POSTGRES_USER:?DB_POSTGRES_USER is required}
+      DB_POSTGRES_PASSWORD: ${DB_POSTGRES_PASSWORD:?DB_POSTGRES_PASSWORD is required}
+      DB_POSTGRES_SSLMODE: ${DB_POSTGRES_SSLMODE:?DB_POSTGRES_SSLMODE is required}
+      HTTP_HOST: 0.0.0.0
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    stop_grace_period: 15s
+    restart: unless-stopped
+
 volumes:
   postgres_data:
