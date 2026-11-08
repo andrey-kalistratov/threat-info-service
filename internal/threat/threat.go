@@ -61,7 +61,9 @@ const (
 // ParseMD5 проверяет хеш и возвращает его в нижнем регистре.
 // Принимает ровно 32 ASCII hex-символа без пробелов и префиксов.
 func ParseMD5(value string) (MD5, error) {
-	if len(value) != 32 {
+	const md5HexLength = 32
+
+	if len(value) != md5HexLength {
 		return "", ErrInvalidMD5Length
 	}
 

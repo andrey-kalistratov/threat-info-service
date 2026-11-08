@@ -1,0 +1,10 @@
+template: testify
+dir: internal/threat/rest/mocks
+filename: threat_service.go
+pkgname: mocks
+structname: MockThreatService
+force-file-write: true
+packages:
+  github.com/andrey-kalistratov/threat-info-service/internal/threat/rest:
+    interfaces:
+      threatService: {}
