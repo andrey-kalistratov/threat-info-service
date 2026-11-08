@@ -3,30 +3,30 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
-	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/andrey-kalistratov/threat-info-service/internal/app"
 	"github.com/andrey-kalistratov/threat-info-service/internal/config"
-	loggingSlog "github.com/andrey-kalistratov/threat-info-service/internal/logging/slog"
+	"github.com/andrey-kalistratov/threat-info-service/internal/logging"
+	"github.com/andrey-kalistratov/threat-info-service/internal/logging/sloglogger"
 )
 
 const serviceName = "threat-service"
 
 func main() {
-	logger := loggingSlog.NewTemporary()
+	logger := sloglogger.NewBootstrap()
 	if err := run(logger); err != nil {
 		logger.Error("application stopped", "service", serviceName, "error", err)
 		os.Exit(1)
 	}
 }
 
-func run(bootstrapLogger *slog.Logger) error {
+func run(bootstrapLogger logging.Logger) error {
 	ctx := context.Background()
+
 	configPath := flag.String("config", "", "path to YAML configuration")
 	flag.Parse()
 
@@ -36,19 +36,18 @@ func run(bootstrapLogger *slog.Logger) error {
 		return err
 	}
 
-	logger, err := loggingSlog.New(&cfg.Observability.Log)
+	logger, err := sloglogger.New(&cfg.Observability.Log)
 	if err != nil {
 		return err
 	}
 	logger = logger.With("service", serviceName)
-	slog.SetDefault(logger)
 
 	sigCtx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	service := app.New(cfg, logger)
-
-	if err := service.Run(sigCtx); err != nil {
+	done, err := service.Run(sigCtx)
+	if err != nil {
 		return err
 	}
 
@@ -56,8 +55,11 @@ func run(bootstrapLogger *slog.Logger) error {
 	select {
 	case <-sigCtx.Done():
 		logger.InfoContext(ctx, "shutdown signal received")
-	case serveErr = <-service.Done():
+	case serveErr = <-done:
 	}
 
-	return errors.Join(serveErr, service.Shutdown(ctx))
+	if err := service.Shutdown(ctx); err != nil {
+		return err
+	}
+	return serveErr
 }
