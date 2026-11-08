@@ -9,16 +9,16 @@ import (
 
 var (
 	// ErrNotFound означает отсутствие записи с указанным MD5.
-	ErrNotFound = errors.New("угроза не найдена")
+	ErrNotFound = errors.New("threat not found")
 
 	// ErrAlreadyExists означает, что запись с указанным MD5 уже существует.
-	ErrAlreadyExists = errors.New("угроза уже существует")
+	ErrAlreadyExists = errors.New("threat already exists")
 
 	// ErrInvalidMD5Length означает, что длина MD5 отличается от 32 символов.
-	ErrInvalidMD5Length = errors.New("MD5 должен содержать ровно 32 шестнадцатеричных символа")
+	ErrInvalidMD5Length = errors.New("MD5 must contain exactly 32 hexadecimal characters")
 
 	// ErrInvalidMD5Characters означает наличие недопустимых hex-символов.
-	ErrInvalidMD5Characters = errors.New("MD5 содержит недопустимые символы")
+	ErrInvalidMD5Characters = errors.New("MD5 contains invalid hexadecimal characters")
 )
 
 // Threat — сведения об угрозе с MD5 файла в качестве ключа.
