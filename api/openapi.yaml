@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Information Exchange Service
   description: API для обмена информацией об угрозах.
-  version: 1.2.1
+  version: 1.2.2
 
 paths:
   /info/{md5}:
@@ -41,7 +41,7 @@ paths:
 
     put:
       summary: Обновить информацию об угрозе по MD5
-      description: Заменяет информацию о существующей угрозе
+      description: Заменяет информацию о существующей угрозе.
       operationId: updateThreat
       requestBody:
         required: true
@@ -150,14 +150,7 @@ components:
           uniqueItems: true
           default: []
           items:
-            type: string
-            enum:
-              - backdoor
-              - ransomware
-              - spyware
-              - trojan
-              - virus
-              - worm
+            $ref: '#/components/schemas/MalwareType'
           example: [trojan, spyware]
         confidence:
           type: integer
@@ -174,6 +167,16 @@ components:
       pattern: '^[a-fA-F0-9]{32}$'
       description: MD5-хеш файла (32 шестнадцатеричных символа)
       example: "d41d8cd98f00b204e9800998ecf8427e"
+
+    MalwareType:
+      type: string
+      enum:
+        - backdoor
+        - ransomware
+        - spyware
+        - trojan
+        - virus
+        - worm
 
     ErrorResponse:
       type: object

@@ -1,27 +1,38 @@
-OPENAPI_VALIDATOR_IMAGE := pythonopenapi/openapi-spec-validator:0.8.2
-GOLANGCI_LINT_IMAGE := golangci/golangci-lint:v2.11.2
+OPENAPI_VALIDATOR_VERSION := 0.8.2
+OGEN_VERSION := v1.24.0
+MOCKERY_VERSION := v3.8.1
+GOLANGCI_LINT_VERSION := v2.11.2
 
 # Минимальное покрытие: целое число от 0 до 100.
 MIN_COVERAGE := 68
 COVERAGE_FOLDER := coverage
-COVERAGE_EXCLUDE :=
+COVERAGE_EXCLUDE := /(generated|mocks)/
 
 COMPOSE := docker compose -p threats-service --env-file docker/.env -f docker/compose.yaml
 
-.PHONY: lint-openapi lint test test-cover db-up migrate
+.PHONY: lint-openapi generate-http generate-mocks lint test test-cover db-up migrate
 
 # Проверка спецификации OpenAPI.
 lint-openapi:
 	docker run --rm \
 		--mount "type=bind,source=$(CURDIR)/api/openapi.yaml,target=/openapi.yaml,readonly" \
-		$(OPENAPI_VALIDATOR_IMAGE) /openapi.yaml
+		pythonopenapi/openapi-spec-validator:$(OPENAPI_VALIDATOR_VERSION) /openapi.yaml
+
+# Воспроизводимая генерация HTTP-контракта для разработчика и CI.
+generate-http:
+	go run github.com/ogen-go/ogen/cmd/ogen@$(OGEN_VERSION) \
+		--config api/ogen.yaml --target internal/rest/generated --package generated --clean api/openapi.yaml
+
+# Генерация моков зависимостей HTTP-тестов для разработчика и CI.
+generate-mocks:
+	go run github.com/vektra/mockery/v3@$(MOCKERY_VERSION) --config .mockery.yaml
 
 # Проверка Go-кода линтерами.
 lint:
 	docker run --rm \
 		--mount "type=bind,source=$(CURDIR),target=/app,readonly" \
 		--workdir /app \
-		$(GOLANGCI_LINT_IMAGE) golangci-lint run ./...
+		golangci/golangci-lint:$(GOLANGCI_LINT_VERSION) golangci-lint run ./...
 
 # Все тесты запускаются заново; в покрытие входит только internal.
 test:

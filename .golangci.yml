@@ -22,6 +22,7 @@ linters:
     - gocognit
     - testifylint
     - gochecknoglobals
+    - mnd
   settings:
     govet:
       enable:
@@ -47,6 +48,11 @@ linters:
   exclusions:
     # Исключать генерацию только по стандартному маркеру Go; тесты проверять.
     generated: strict
+    rules:
+      # Ошибка уже представлена типизированным HTTP-ответом; nil error не означает её потерю.
+      - path: '^internal/threat/rest/operations\.go$'
+        linters:
+          - nilerr
 
 formatters:
   enable:
